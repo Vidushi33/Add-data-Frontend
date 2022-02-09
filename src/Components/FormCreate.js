@@ -1,122 +1,160 @@
-import { Container, Row, Card, Button, Form, Col } from "react-bootstrap";
 import React from "react";
+import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-import swal from "sweetalert";
+import { Form, Row, Col, Button } from "react-bootstrap";
+import axios from "axios"
+import swal from "sweetalert"
+import { useState } from "react";
+import {AiTwotoneDelete} from "react-icons/ai"
 
-import { useState, useEffect } from "react";
+export default function FormCreate() {
+  const [field, setField] = useState([]);
+  const [counter, setCounter] = useState(1);
+  const { register, handleSubmit } = useForm();
 
-export default function FormCreate(props) {
-
-  
-  
-  const { register, handleSubmit, reset } = useForm();
-  const submitData = async (data) => {
-    console.log(data)
+  const onSubmit =async (data) => {
+    // console.log(data);
     
-    const response = await axios.post("https://add-delete-data.herokuapp.com/addUser", data);
-
-    if (response.data.message) {
-      swal({
-        title: `${response.data.message}`,
-        icon: `${response.data.icon}`,
-      }).then(()=>{
-        window.location = "/table"
-      });
-    reset()
+    if(data.fullName.length==0 || data.email.length==0|| data.userName.length==0)
+    {
+      alert("All fields are mandatory")
     }
-  }
+    else{
+      const response = await axios.post("http://localhost:4000/addUsers",data)
+      swal({
+        title:`${response.data.message}`,
+        icon:"success"
+      }).then(()=>{
+        window.location="/table"
+      })
+    }
     
+  };
 
-    
-     
-  return props.formDetails.map((val, idx) => {
-    let email = `email-${idx}`,
-      fullName = `fullName-${idx}`,
-      userName = `userName-${idx}`;
+  const addField = () => {
+    setField((prevfield) => [...prevfield, counter]);
+    setCounter((prevCounter) => prevCounter + 1);
+    console.log(field);
+  };
+  const removeField = (index) => () => {
+    setField((prevfield) => [
+      ...prevfield.filter((item) => item !== index),
+    ]);
+    setCounter((prevCounter) => prevCounter - 1);
+  };
 
-    return (
-      <Container fluid>
-        <Row >
-          <Col className = "mt-5 ">
-           
-            
-                <h1 className="text-center text-5xl ">Form</h1>
-            
-               
+  const clearField = () => {
+    setField([]);
+  };
 
-                <Form onSubmit = {handleSubmit(submitData)} >
-                  <div className = "d-flex mt-5 mx-auto items-center  justify-center">
-                  <Form.Group
-                    className="mb-3 mr-12"
-                    
-                  >
-                    <Form.Label className="text-black ">Email: </Form.Label>
+  return (
+    <div className="flex justify-center bg-black h-fit p-5">
+      <Form
+        className="text-white border-8 border-white p-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <fieldset name="1" key="1">
+          <Row>
+            <Col lg={4}>
+              <Form.Group className="" controlId="formBasicEmail">
+                <Form.Label>Full Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Full Name"
+                  {...register("fullName")}
+                />
+                <Form.Text className=" text-black">
+                  We'll never share your email with anyone else.
+                </Form.Text>
+              </Form.Group>
+            </Col>
+            <Col lg={4}>
+              <Form.Group className="" controlId="formBasicPassword">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="Email"
+                  {...register("email")}
+                />
+              </Form.Group>
+            </Col>
+            <Col lg={3}>
+              <Form.Group className="" controlId="formBasicPassword">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Username"
+                  {...register("userName", {minLength:4})}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+        </fieldset>
+        {field.map((index) => {
+          const fieldName = `input[${index}]`;
+          return (
+            <fieldset name={fieldName} key={fieldName} className="mb-3">
+              <Row>
+                <Col lg={4}>
+                  <Form.Group className="" controlId="formBasicEmail">
+                    <Form.Label>Full Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Full name"
+                      {...register(`${fieldName}.fullName`)}
+                    />
+              
+                  </Form.Group>
+                </Col>
+                <Col lg={4}>
+                  <Form.Group className="" controlId="formBasicPassword">
+                    <Form.Label>Email</Form.Label>
                     <Form.Control
                       type="email"
-                      {...register("email", { required: true })}
-                      placeholder="Enter your mailId"
-                      data-id={idx}
-                      id={email}
+                      placeholder="Email"
+                      {...register(`${fieldName}.email`)}
                     />
                   </Form.Group>
-
-                  <Form.Group
-                    className="mb-3 mr-12"
-                    
-                  >
-                    <Form.Label className="text-black ">FullName: </Form.Label>
+                </Col>
+                <Col lg={3}>
+                  <Form.Group className="" controlId="formBasicPassword">
+                    <Form.Label>Username</Form.Label>
                     <Form.Control
                       type="text"
-                      {...register("fullName", { required: true })}
-                      placeholder="Enter your full name"
-                      data-id={idx}
-                      id={fullName}
+                      placeholder="Username"
+                      {...register(`${fieldName}.userName`,  {minLength:4})}
                     />
                   </Form.Group>
-
-                  <Form.Group
-                    className="mb-3 mr-12"
-                    
+                </Col>
+                <Col lg={1} className="flex justify-start items-center mb-3">
+                  <button
+                    type="button"
+                    onClick={removeField(index)}
+                    className="btn btn-danger p-2 mt-9"
                   >
-                    <Form.Label className="text-black ">Username: </Form.Label>
-                    <Form.Control
-                      type="text"
-                      {...register("userName", { required: true, min:4 })}
-                      placeholder="Enter your user name"
-                      data-id={idx}
-                      id={userName}
-                    />
-                  </Form.Group>
-                  <div style={{ float: "right" }}>
-                  {idx === 0 ? (
-                    <button
-                      onClick={() => props.add()}
-                      type="button"
-                      className="btn btn-primary text-center mt-4"
-                    >
-                      Add
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => props.delete(val)}
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-                  </div>
-                  
-                  <div className="text-center">
-                    <Button variant="primary" type="submit" >Submit</Button>
-                  </div>
-                </Form>
-                
-             
-          </Col>
-        </Row>
-      </Container>
-    );
-  });
-  }
+                    <AiTwotoneDelete className = ""/>
+                  </button>
+                </Col>
+              </Row>
+            </fieldset>
+          );
+        })}
+        <div className="flex justify-center space-x-8 mt-16">
+          <button type="button" onClick={addField} className="btn btn-primary">
+            Add Field
+          </button>
+          <button
+            type="button"
+            onClick={clearField}
+            className="btn btn-danger"
+          >
+            Clear All Field
+          </button>
+        </div>
+        <div className=" p-4 flex justify-center items-center">
+          <input type="submit" className="btn btn-success" />
+        </div>
+      </Form>
+    </div>
+  );
+}

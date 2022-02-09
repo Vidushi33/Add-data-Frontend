@@ -7,13 +7,13 @@ import { useState, useEffect } from "react";
 export default function TableData(){
   const [data, setData] = useState([]);
   useEffect(async () => {
-    const response = await axios.get("https://add-delete-data.herokuapp.com/getUsers");
+    const response = await axios.get("http://localhost:4000/getUsers");
     setData(response.data.users);
   },[]);
 
     return(
       <Container fluid className = "h-screen" style = {{background: "linear-gradient(to right, #ee9ca7, #ffdde1)"}}>
-        <h1 className="text-center text-5xl">Table</h1>
+        <h1 className="text-center text-5xl ">Table</h1>
            <Table
               striped
               bordered

@@ -1,5 +1,5 @@
 import './App.css';
-import FormAdd from './Components/FormAdd';
+import FormCreate from './Components/FormCreate';
 
 import TableData from './Components/TableData';
 import {
@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
     <Routes>
-        <Route exact path = "/" element = {<FormAdd />} />
+        <Route exact path = "/" element = {<FormCreate />} />
         <Route exact path = "/table" element = {<TableData />} />
     </Routes>
   </Router>
