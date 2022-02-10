@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 export default function TableData(){
   const [data, setData] = useState([]);
   useEffect(async () => {
-    const response = await axios.get("http://localhost:4000/getUsers");
+    const response = await axios.get("https://add-delete-data.herokuapp.com/getUsers");
     setData(response.data.users);
   },[]);
 

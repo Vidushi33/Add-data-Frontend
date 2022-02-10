@@ -20,7 +20,7 @@ export default function FormCreate() {
       alert("All fields are mandatory")
     }
     else{
-      const response = await axios.post("http://localhost:4000/addUsers",data)
+      const response = await axios.post("https://add-delete-data.herokuapp.com/addUsers",data)
       swal({
         title:`${response.data.message}`,
         icon:"success"
